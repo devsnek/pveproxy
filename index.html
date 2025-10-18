@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VNC</title>
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #screen {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="screen"></div>
+    <script type="module">
+      import RFB from "/noVNC/core/rfb.js";
+      const ws = new WebSocket(window.location.href);
+      ws.addEventListener("message", (e) => {
+        const rfb = new RFB(document.getElementById("screen"), ws, {
+          credentials: { password: e.data },
+        });
+        rfb.addEventListener("desktopname", (e) => {
+          document.title = e.detail.name;
+        });
+        rfb.viewOnly = false;
+        rfb.scaleViewport = false;
+      }, { once: true });
+    </script>
+  </body>
+</html>
